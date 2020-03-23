@@ -1,31 +1,44 @@
-version: '3'
+version: '3.7'
+
+
+networks:
+  cluster:
+
+
+x-op-restart-policy: &restart_policy
+  restart: unless-stopped  # always
+
 
 services:
-    db:
-        image: postgres:12.2-alpine
-        restart: always
-        volumes:
-            - ${DB_VOLUME}:/var/lib/postgresql/data
-        environment:
-            - POSTGRES_DB=${POSTGRES_DB}
-            - POSTGRES_USER=${POSTGRES_USER}
-            - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+  db:
+    image: postgres:12.2-alpine
+    <<: *restart_policy
+    volumes:
+      - ${DB_VOLUME}:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    networks:
+      - cluster
 
-    app:    
-        image: nextcloud:18.0.2-apache
-        restart: always
-        volumes:
-            - ${DATA_VOLUME}:/var/www/html
-        ports:
-            - ${NEXTCLOUD_PORT}:80
-        environment:
-            - POSTGRES_HOST=db
-            - POSTGRES_DB=${POSTGRES_DB}
-            - POSTGRES_USER=${POSTGRES_USER}
-            - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-            - NEXTCLOUD_ADMIN_USER=${NEXTCLOUD_ADMIN_USER}
-            - NEXTCLOUD_ADMIN_PASSWORD=${NEXTCLOUD_ADMIN_PASSWORD}
-            - NEXTCLOUD_TABLE_PREFIX=nc_
-        depends_on:
-            - db
+  app:
+    image: nextcloud:18.0.2-apache
+    <<: *restart_policy
+    volumes:
+      - ${DATA_VOLUME}:/var/www/html
+    ports:
+      - ${NEXTCLOUD_PORT}:80
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - NEXTCLOUD_ADMIN_USER=${NEXTCLOUD_ADMIN_USER}
+      - NEXTCLOUD_ADMIN_PASSWORD=${NEXTCLOUD_ADMIN_PASSWORD}
+      - NEXTCLOUD_TABLE_PREFIX=nc_
+    depends_on:
+      - db
+    networks:
+      - cluster
 
