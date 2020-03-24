@@ -11,19 +11,19 @@ x-op-restart-policy: &restart_policy
 
 services:
   db:
-    image: postgres:${PG_VERSION}
+    image: postgres:${POSTGRES_VERSION}
     <<: *restart_policy
     volumes:
       - ${DB_VOLUME}:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PWD}
     networks:
       - cluster
 
   app:
-    image: nextcloud:${NC_VERSION}
+    image: nextcloud:${NEXTCLOUD_VERSION}
     <<: *restart_policy
     volumes:
       - ${DATA_VOLUME}:/var/www/html
@@ -31,9 +31,9 @@ services:
       - ${NEXTCLOUD_PORT}:80
     environment:
       - POSTGRES_HOST=db
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PWD}
       - NEXTCLOUD_ADMIN_USER=${NEXTCLOUD_ADMIN_USER}
       - NEXTCLOUD_ADMIN_PASSWORD=${NEXTCLOUD_ADMIN_PASSWORD}
       - NEXTCLOUD_TABLE_PREFIX=nc_
