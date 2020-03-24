@@ -1,9 +1,12 @@
+PG_VERSION=12.2-alpine
+NC_VERSION=18.0.2-apache
+
 BASE_VOLUME=
 NC_DB_VOLUME=${BASE_VOLUME}/db
 NC_DATA_VOLUME=${BASE_VOLUME}/nextcloud
 
 NC_DB_HOST=host.docker.internal
-NC_DB_PORT=5432
+NC_DB_PORT=
 NC_DB_NAME=nextcloud
 NC_DB_USER=nextcloud
 NC_DB_PWD=
@@ -12,7 +15,9 @@ NC_ADMIN_PASSWORD=
 NC_PORT=
 
 
-up:
+cluster_up:
+	PG_VERSION=${PG_VERSION} \
+	NC_VERSION=${NC_VERSION} \
 	DB_VOLUME=${NC_DB_VOLUME} \
 	DATA_VOLUME=${NC_DATA_VOLUME} \
 	POSTGRES_DB=${NC_DB_NAME} \
@@ -23,7 +28,9 @@ up:
 	NEXTCLOUD_PORT=${NC_PORT} \
 	docker-compose up -d
 
-down:
+cluster_down:
+	PG_VERSION=${PG_VERSION} \
+	NC_VERSION=${NC_VERSION} \
 	DB_VOLUME=${NC_DB_VOLUME} \
 	DATA_VOLUME=${NC_DATA_VOLUME} \
 	POSTGRES_DB=${NC_DB_NAME} \
@@ -34,7 +41,7 @@ down:
 	NEXTCLOUD_PORT=${NC_PORT} \
 	docker-compose down
 
-docker_db:
+run_db:
 	docker run \
 		--name postgres12 \
 		-it \
@@ -43,9 +50,9 @@ docker_db:
 		-e POSTGRES_DB=${NC_DB_NAME} \
 		-e POSTGRES_USER=${NC_DB_USER} \
 		-e POSTGRES_PASSWORD=${NC_DB_PWD} \
-		postgres:12.2-alpine
+		postgres:${PG_VERSION}
 
-docker_nc:
+run_nc:
 	docker run \
 		--name nextcloud18 \
 		-it \
@@ -58,5 +65,5 @@ docker_nc:
 		-e POSTGRES_USER=${NC_DB_USER} \
 		-e POSTGRES_PASSWORD=${NC_DB_PWD} \
 		-e NEXTCLOUD_TABLE_PREFIX=nc_ \
-		nextcloud:18.0.2-apache
+		nextcloud:${NC_VERSION}
 

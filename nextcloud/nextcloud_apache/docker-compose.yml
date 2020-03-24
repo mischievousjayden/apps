@@ -11,7 +11,7 @@ x-op-restart-policy: &restart_policy
 
 services:
   db:
-    image: postgres:12.2-alpine
+    image: postgres:${PG_VERSION}
     <<: *restart_policy
     volumes:
       - ${DB_VOLUME}:/var/lib/postgresql/data
@@ -23,7 +23,7 @@ services:
       - cluster
 
   app:
-    image: nextcloud:18.0.2-apache
+    image: nextcloud:${NC_VERSION}
     <<: *restart_policy
     volumes:
       - ${DATA_VOLUME}:/var/www/html
