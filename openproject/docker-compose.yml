@@ -22,7 +22,7 @@ x-op-restart-policy: &restart_policy
 
 services:
   db:
-    image: postgres:10
+    image: postgres:${POSTGRES_VERSION}
     <<: *restart_policy
     stop_grace_period: "3s"
     volumes:
@@ -36,7 +36,7 @@ services:
       - cluster
 
   app:    
-    image: openproject/community:10
+    image: openproject/community:${OPENPROJECT_VERSION}
     <<: *restart_policy
     volumes:
       # - datavolume:/var/www/html
