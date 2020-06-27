@@ -14,7 +14,7 @@ services:
     image: postgres:${POSTGRES_VERSION}
     <<: *restart_policy
     volumes:
-      - ${POSTGRES_VOLUME}:/var/lib/postgresql/data
+      - ${DB_VOLUME}:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=${DB_NAME}
       - POSTGRES_USER=${DB_USER}
@@ -26,9 +26,9 @@ services:
     image: nextcloud:${NEXTCLOUD_VERSION}
     <<: *restart_policy
     volumes:
-      - ${NEXTCLOUD_VOLUME}:/var/www/html
+      - ${APP_VOLUME}:/var/www/html
     ports:
-      - ${NEXTCLOUD_PORT}:80
+      - ${APP_PORT}:80
     environment:
       - POSTGRES_HOST=db
       - POSTGRES_DB=${DB_NAME}
