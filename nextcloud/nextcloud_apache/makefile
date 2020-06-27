@@ -43,7 +43,7 @@ cluster_down:
 
 run_db:
 	docker run \
-		--name postgres12 \
+		--name nextcloud_db \
 		-it \
 		-v ${NC_DB_VOLUME}:/var/lib/postgresql/data \
 		-p ${NC_DB_PORT}:5432 \
@@ -54,7 +54,7 @@ run_db:
 
 run_app:
 	docker run \
-		--name nextcloud18 \
+		--name nextcloud_app \
 		-it \
 		-v ${NC_APP_VOLUME}:/var/www/html \
 		-p ${NC_APP_PORT}:80 \
