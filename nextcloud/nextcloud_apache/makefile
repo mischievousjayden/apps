@@ -43,6 +43,7 @@ cluster_down:
 
 run_db:
 	docker run \
+		--rm \
 		--name nextcloud_db \
 		-it \
 		-v ${NC_DB_VOLUME}:/var/lib/postgresql/data \
@@ -54,6 +55,7 @@ run_db:
 
 run_app:
 	docker run \
+		--rm \
 		--name nextcloud_app \
 		-it \
 		-v ${NC_APP_VOLUME}:/var/www/html \
