@@ -1,0 +1,53 @@
+version: '3.7'
+
+
+networks:
+  cluster:
+
+
+# volumes:
+#   dbvolume:
+#     driver_opts:
+#       type: volume
+#       device: "${DB_VOLUME}"
+#   datavolume:
+#    driver_opts:
+#       type: volume
+#       device: "${APP_VOLUME}"
+
+
+x-op-restart-policy: &restart_policy
+  restart: unless-stopped
+
+
+services:
+  db:
+    image: postgres:${POSTGRES_VERSION}
+    <<: *restart_policy
+    stop_grace_period: "3s"
+    volumes:
+      # - dbvolume:/var/lib/postgresql/data
+      - ${DB_VOLUME}:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PWD}
+    networks:
+      - cluster
+
+  app:    
+    image: openproject/community:${OPENPROJECT_VERSION}
+    <<: *restart_policy
+    volumes:
+      # - datavolume:/var/www/html
+      - ${APP_VOLUME}:/var/www/html
+    ports:
+      - ${APP_PORT}:80
+    environment:
+      - DATABASE_URL=postgres://${DB_USER}:${DB_PWD}@db:5432/${DB_NAME}
+      - SECRET_KEY_BASE=${SECRET_KEY_BASE}
+    depends_on:
+      - db
+    networks:
+      - cluster
+

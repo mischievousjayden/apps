@@ -42,10 +42,8 @@ cluster_down:
 	docker-compose down
 
 run_db:
-	docker run \
-		--rm \
+	docker run --rm -it \
 		--name nextcloud_db \
-		-it \
 		-v ${NC_DB_VOLUME}:/var/lib/postgresql/data \
 		-p ${NC_DB_PORT}:5432 \
 		-e POSTGRES_DB=${NC_DB_NAME} \
@@ -54,10 +52,8 @@ run_db:
 		postgres:${PG_VERSION}
 
 run_app:
-	docker run \
-		--rm \
+	docker run --rm -it \
 		--name nextcloud_app \
-		-it \
 		-v ${NC_APP_VOLUME}:/var/www/html \
 		-p ${NC_APP_PORT}:80 \
 		-e POSTGRES_HOST=${NC_DB_HOST}:${NC_DB_PORT} \
