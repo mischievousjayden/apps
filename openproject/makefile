@@ -2,8 +2,8 @@ PG_VERSION=10
 OP_VERSION=10
 
 BASE_VOLUME=
-OP_DB_DATA_VOLUME=${BASE_VOLUME}/db
-OP_APP_DATA_VOLUME=${BASE_VOLUME}/openproject
+OP_DB_VOLUME=${BASE_VOLUME}/db
+OP_APP_VOLUME=${BASE_VOLUME}/app
 
 OP_DB_HOST=host.docker.internal
 OP_DB_PORT=
@@ -17,11 +17,11 @@ OP_SECRET_KEY_BASE=
 cluster_up:
 	POSTGRES_VERSION=${PG_VERSION} \
 	OPENPROJECT_VERSION=${OP_VERSION} \
-	DB_DATA_VOLUME=${OP_DB_DATA_VOLUME} \
+	DB_VOLUME=${OP_DB_VOLUME} \
 	DB_NAME=${OP_DB_NAME} \
 	DB_USER=${OP_DB_USER} \
 	DB_PWD=${OP_DB_PWD} \
-	APP_DATA_VOLUME=${OP_APP_DATA_VOLUME} \
+	APP_VOLUME=${OP_APP_VOLUME} \
 	APP_PORT=${OP_APP_PORT} \
 	SECRET_KEY_BASE=${OP_SECRET_KEY_BASE} \
 	docker-compose up -d
@@ -29,18 +29,18 @@ cluster_up:
 cluster_down:
 	POSTGRES_VERSION=${PG_VERSION} \
 	OPENPROJECT_VERSION=${OP_VERSION} \
-	DB_DATA_VOLUME=${OP_DB_DATA_VOLUME} \
+	DB_VOLUME=${OP_DB_VOLUME} \
 	DB_NAME=${OP_DB_NAME} \
 	DB_USER=${OP_DB_USER} \
 	DB_PWD=${OP_DB_PWD} \
-	APP_DATA_VOLUME=${OP_APP_DATA_VOLUME} \
+	APP_VOLUME=${OP_APP_VOLUME} \
 	APP_PORT=${OP_APP_PORT} \
 	SECRET_KEY_BASE=${OP_SECRET_KEY_BASE} \
 	docker-compose down
 
 run_db:
-	docker run -it \
-		--name op_postgres10 \
+	docker run --rm -it \
+		--name openproject_db \
 		-v ${OP_DB_VOLUME}:/var/lib/postgresql/data \
 		-p ${OP_DB_PORT}:5432 \
 		-e POSTGRES_DB=${OP_DB_NAME} \
@@ -49,8 +49,8 @@ run_db:
 		postgres:${PG_VERSION}
 
 run_app:
-	docker run -it \
-		--name openproject10 \
+	docker run --rm -it \
+		--name openproject_app \
 		-v ${OP_DATA_VOLUME}:/var/openproject/assets \
 		-p ${OP_APP_PORT}:80 \
 		-e SECRET_KEY_BASE=${OP_SECRET_KEY_BASE} \

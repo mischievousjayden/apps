@@ -9,11 +9,11 @@ networks:
 #   dbvolume:
 #     driver_opts:
 #       type: volume
-#       device: "${DB_DATA_VOLUME}"
+#       device: "${DB_VOLUME}"
 #   datavolume:
 #    driver_opts:
 #       type: volume
-#       device: "${APP_DATA_VOLUME}"
+#       device: "${APP_VOLUME}"
 
 
 x-op-restart-policy: &restart_policy
@@ -27,7 +27,7 @@ services:
     stop_grace_period: "3s"
     volumes:
       # - dbvolume:/var/lib/postgresql/data
-      - ${DB_DATA_VOLUME}:/var/lib/postgresql/data
+      - ${DB_VOLUME}:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=${DB_NAME}
       - POSTGRES_USER=${DB_USER}
@@ -40,7 +40,7 @@ services:
     <<: *restart_policy
     volumes:
       # - datavolume:/var/www/html
-      - ${APP_DATA_VOLUME}:/var/www/html
+      - ${APP_VOLUME}:/var/www/html
     ports:
       - ${APP_PORT}:80
     environment:
