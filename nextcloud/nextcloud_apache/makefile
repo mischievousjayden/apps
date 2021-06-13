@@ -1,5 +1,5 @@
-PG_VERSION=12.3-alpine
-NC_VERSION=18.0.6-apache
+PG_VERSION=13-alpine
+NC_VERSION=21-apache
 
 BASE_VOLUME=
 NC_DB_VOLUME=${BASE_VOLUME}/db
@@ -13,6 +13,7 @@ NC_DB_PWD=
 NC_APP_ADMIN_USER=admin
 NC_APP_ADMIN_PWD=
 NC_APP_PORT=
+NC_TRUSTED_DOMAINS="127.0.0.1 0.0.0.0 localhost"
 
 
 cluster_up:
@@ -26,6 +27,7 @@ cluster_up:
 	APP_ADMIN_USER=${NC_APP_ADMIN_USER} \
 	APP_ADMIN_PWD=${NC_APP_ADMIN_PWD} \
 	APP_PORT=${NC_APP_PORT} \
+	APP_TRUSTED_DOMAINS=${NC_TRUSTED_DOMAINS} \
 	docker-compose up -d
 
 cluster_down:
@@ -42,7 +44,7 @@ cluster_down:
 	docker-compose down
 
 run_db:
-	docker run --rm -it \
+	docker run --rm \
 		--name nextcloud_db \
 		-v ${NC_DB_VOLUME}:/var/lib/postgresql/data \
 		-p ${NC_DB_PORT}:5432 \
@@ -52,7 +54,7 @@ run_db:
 		postgres:${PG_VERSION}
 
 run_app:
-	docker run --rm -it \
+	docker run --rm \
 		--name nextcloud_app \
 		-v ${NC_APP_VOLUME}:/var/www/html \
 		-p ${NC_APP_PORT}:80 \
@@ -62,6 +64,7 @@ run_app:
 		-e POSTGRES_PASSWORD=${NC_DB_PWD} \
 		-e NEXTCLOUD_ADMIN_USER=${NC_APP_ADMIN_USER} \
 		-e NEXTCLOUD_ADMIN_PASSWORD=${NC_APP_ADMIN_PWD} \
-		-e NEXTCLOUD_TABLE_PREFIX=nc_ \
+		-e NEXTCLOUD_TRUSTED_DOMAINS=${NC_TRUSTED_DOMAINS} \
+		--add-host=host.docker.internal:host-gateway \
 		nextcloud:${NC_VERSION}
 
